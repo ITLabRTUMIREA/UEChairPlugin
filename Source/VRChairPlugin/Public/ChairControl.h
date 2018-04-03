@@ -13,7 +13,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType, Blueprintable, Category = ChairControl, meta = (DisplayName = "Chair Control"))
 class VRCHAIRPLUGIN_API UChairControl : public UObject
 {
 	GENERATED_BODY()
