@@ -9,7 +9,6 @@
 UChairControl* UChairControl::SerialPort(bool& connected, int32 ComPort)
 {
 	UChairControl* value = NewObject<UChairControl>();
-	value->OpenPort(ComPort);
 	connected = value->OpenPort(ComPort);
 	return value;
 }
@@ -182,6 +181,7 @@ bool UChairControl::OpenPort(int32 ComPort) {
 			else {
 				this->connected = true;
 				PurgeComm(this->handler, PURGE_RXCLEAR | PURGE_TXCLEAR);
+                GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Open port!!!"));
 				//Sleep(ARDUINO_WAIT_TIME);
 			}
 		}
