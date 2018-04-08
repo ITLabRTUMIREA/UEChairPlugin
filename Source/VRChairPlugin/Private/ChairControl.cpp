@@ -6,13 +6,21 @@
 
 
 
-UChairControl* UChairControl::SerialPort(bool& connected, int32 ComPort)
+UChairControl* UChairControl::SerialPort(bool& connected, int32 ComPort, AActor* TargetActor)
 {
 	UChairControl* value = NewObject<UChairControl>();
+	value->Timer = TargetActor;
 	connected = value->OpenPort(ComPort);
 	return value;
 }
 
+
+void UChairControl::BeginDestroy()
+{
+	Super::BeginDestroy();
+
+	ClosePort();
+}
 
 
 bool UChairControl::isConnected()
@@ -33,6 +41,7 @@ bool UChairControl::PortWrite(TArray<uint8> bytes)
 bool UChairControl::ClosePort()
 {
 	CloseHandle(this->handler);
+	UE_LOG(LogTemp, Log, TEXT("Close Port"));
 	return true;
 }
 
@@ -43,11 +52,35 @@ TArray<uint8> UChairControl::FloatToBytes(float value)
 	return bytes;
 }
 
-void UChairControl::StartSending(AActor* TargetActor, float time)
+void UChairControl::StartSending(float frequency, bool log)
 {
-	Timer = TargetActor;
-	Timer->GetWorldTimerManager().SetTimer(timer, this, &UChairControl::StartPost, 0.1f, true);
-	Timer->GetWorldTimerManager().SetTimer(timerStop, this, &UChairControl::StopPost, time, true);
+	this->log = log;
+	UE_LOG(LogTemp, Log, TEXT("StartPost"));
+
+	Timer->GetWorldTimerManager().SetTimer(timer, this, &UChairControl::StartPost, frequency, true);
+
+}
+
+void UChairControl::StopSending()
+{
+	StopPost();
+}
+
+void UChairControl::TimerSending(float time, float frequency, bool log)
+{
+	this->log = log;
+
+	UE_LOG(LogTemp, Log, TEXT("StartPost"));
+
+	if (time >= 0) {
+		Timer->GetWorldTimerManager().SetTimer(timerStop, this, &UChairControl::StopPost, time, true);
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("The timer value is less than 0, so the chair will work for 1 second"));
+		Timer->GetWorldTimerManager().SetTimer(timerStop, this, &UChairControl::StopPost, 1.0f, true);
+	}
+
+	Timer->GetWorldTimerManager().SetTimer(timer, this, &UChairControl::StartPost, frequency, true);
 }
 
 void UChairControl::Control(float roll, float pitch)
@@ -117,14 +150,15 @@ void UChairControl::StartPost()
 	packet.Append(FloatToBytes(roll));
 	packet.Append(FloatToBytes(0));
 	packet = EncodePacket(packet);
+	if (log) {
+		FString logResult = "Byte: \n";
+		for (int i = 0; i < packet.Num(); ++i) {
+			FString textLog = FString::FromInt(packet[i]) + ", ";
+			logResult = logResult + textLog;
+		}
 
-	FString logResult = "Byte: \n";
-	for (int i = 0; i < packet.Num(); ++i) {
-		FString textLog = FString::FromInt(packet[i]) + ", ";
-		logResult = logResult + textLog;
+		UE_LOG(LogTemp, Log, TEXT("%s"), *logResult);
 	}
-	UE_LOG(LogTemp, Log, TEXT("%s"), *logResult);
-
 	PortWrite(packet);
 
 	packet.Empty();
@@ -150,11 +184,14 @@ bool UChairControl::OpenPort(int32 ComPort) {
 		NULL);
 	if (this->handler == INVALID_HANDLE_VALUE) {
 		if (GetLastError() == ERROR_FILE_NOT_FOUND) {
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("ERROR: Handle was not attached. Reason: %s not available"), *portName);
+
+			UE_LOG(LogTemp, Error, TEXT("ERROR: Handle was not attached. Reason: %s not available!"), *portName);
+
 		}
 		else
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("ERROR!!!"));
+
+			UE_LOG(LogTemp, Error, TEXT("ERROR!!!"));
 
 		}
 	}
@@ -162,7 +199,9 @@ bool UChairControl::OpenPort(int32 ComPort) {
 		DCB dcbSerialParameters = { 0 };
 
 		if (!GetCommState(this->handler, &dcbSerialParameters)) {
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("failed to get current serial parameters"));
+
+			UE_LOG(LogTemp, Error, TEXT("Failed to get current serial parameter"));
+
 
 		}
 		else {
@@ -175,14 +214,12 @@ bool UChairControl::OpenPort(int32 ComPort) {
 
 			if (!SetCommState(handler, &dcbSerialParameters))
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("ALERT: could not set Serial port parameters"));
-				//printf("ALERT: could not set Serial port parameters\n");
+				UE_LOG(LogTemp, Error, TEXT("ALERT: could not set Serial port parameters"));
 			}
 			else {
 				this->connected = true;
 				PurgeComm(this->handler, PURGE_RXCLEAR | PURGE_TXCLEAR);
-                GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("Open port!!!"));
-				//Sleep(ARDUINO_WAIT_TIME);
+				UE_LOG(LogTemp, Log, TEXT("Open Port!!!"));
 			}
 		}
 	}
