@@ -72,7 +72,7 @@ void UChairControl::TimerSending(float time, float frequency, bool log)
 
 	UE_LOG(LogTemp, Log, TEXT("StartPost"));
 
-	if (time >= 0) {
+	if (time > 0 || time >= frequency) {
 		Timer->GetWorldTimerManager().SetTimer(timerStop, this, &UChairControl::StopPost, time, true);
 	}
 	else {
