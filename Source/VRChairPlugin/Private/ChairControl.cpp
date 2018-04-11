@@ -66,6 +66,12 @@ void UChairControl::StopSending()
 	StopPost();
 }
 
+void UChairControl::Destroy(AActor * test)
+{
+	ClosePort();
+
+}
+
 void UChairControl::TimerSending(float time, float frequency, bool log)
 {
 	this->log = log;
@@ -223,6 +229,7 @@ bool UChairControl::OpenPort(int32 ComPort) {
 			}
 		}
 	}
+	Timer->OnDestroyed.AddDynamic(this, &UChairControl::Destroy);
 	return this->connected;
 }
 

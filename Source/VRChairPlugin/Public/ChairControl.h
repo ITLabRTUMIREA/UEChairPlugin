@@ -22,6 +22,8 @@ protected:
 
 	virtual void BeginDestroy() override;
 
+
+
 public:
 
 
@@ -45,6 +47,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = ChairControl)
 		void StopSending();
+	
+	UFUNCTION()
+	void Destroy(AActor* test);
 
 	UFUNCTION(BlueprintCallable, Category = ChairControl, meta = (AdvancedDisplay = "Frequency, Log"))
 		void TimerSending(float time = 1.0f, float frequency = 0.05f, bool log = false);
@@ -57,6 +62,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, Category = ChairControl)
 		float roll;
+
 
 private:
 	HANDLE handler;
@@ -81,6 +87,8 @@ private:
 
 	void StartPost();
 	void StopPost();
+
+
 
 	bool OpenPort(int32 ComPort);
 
