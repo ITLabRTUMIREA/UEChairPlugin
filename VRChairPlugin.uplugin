@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
 	"Version": 1,
-	"VersionName": "1.0.2",
+	"VersionName": "1.0.3",
 	"FriendlyName": "VR Chair",
 	"Description": "",
 	"Category": "Virtual Reality",
@@ -16,8 +16,12 @@
 	"Modules": [
 		{
 			"Name": "VRChairPlugin",
-			"Type": "Developer",
-			"LoadingPhase": "Default"
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"WhitelistPlatforms": [
+				"Win32",
+				"Win64"
+			]
 		}
 	]
 }

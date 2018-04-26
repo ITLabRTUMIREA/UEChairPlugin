@@ -2,12 +2,12 @@
 
 #pragma once
 
-#include <windows.h>
-#include <stdio.h>
-#include <stdlib.h>
+//#include "Windows.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "UObject/NoExportTypes.h"
+#include "TimerManager.h"
+#include "Runtime/Core/Public/Windows/MinWindows.h"
 #include "ChairControl.generated.h"
 
 /**
