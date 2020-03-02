@@ -54,7 +54,7 @@ TArray<uint8> UChairControl::FloatToBytes(float value)
 
 void UChairControl::StartSending(float frequency, bool log)
 {
-	this->log = log;
+	this->isLogChair = log;
 	UE_LOG(LogTemp, Log, TEXT("StartPost"));
 
 	Timer->GetWorldTimerManager().SetTimer(timer, this, &UChairControl::StartPost, frequency, true);
@@ -74,7 +74,7 @@ void UChairControl::Destroy(AActor * test)
 
 void UChairControl::TimerSending(float time, float frequency, bool log)
 {
-	this->log = log;
+	this->isLogChair = log;
 
 	UE_LOG(LogTemp, Log, TEXT("StartPost"));
 
@@ -91,8 +91,8 @@ void UChairControl::TimerSending(float time, float frequency, bool log)
 
 void UChairControl::Control(float roll, float pitch)
 {
-	this->roll = roll;
-	this->pitch = pitch;
+	this->rollChair = roll;
+	this->pitchChair = pitch;
 }
 
 uint16 UChairControl::CRC16(uint16 crc, uint8 b)
@@ -152,11 +152,11 @@ void UChairControl::StartPost()
 	packet.Add(33);
 	packet.Add(12);
 	packet.Add(3);
-	packet.Append(FloatToBytes(pitch));
-	packet.Append(FloatToBytes(roll));
+	packet.Append(FloatToBytes(pitchChair));
+	packet.Append(FloatToBytes(rollChair));
 	packet.Append(FloatToBytes(0));
 	packet = EncodePacket(packet);
-	if (log) {
+	if (isLogChair) {
 		FString logResult = "Byte: \n";
 		for (int i = 0; i < packet.Num(); ++i) {
 			FString textLog = FString::FromInt(packet[i]) + ", ";

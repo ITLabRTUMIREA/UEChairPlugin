@@ -58,10 +58,10 @@ public:
 		void Control(float roll, float pitch);
 
 	UPROPERTY(BlueprintReadWrite, Category = ChairControl)
-		float pitch;
+		float pitchChair;
 
 	UPROPERTY(BlueprintReadWrite, Category = ChairControl)
-		float roll;
+		float rollChair;
 
 
 private:
@@ -92,6 +92,6 @@ private:
 
 	bool OpenPort(int32 ComPort);
 
-	bool log;
+	bool isLogChair;
 	
 };
