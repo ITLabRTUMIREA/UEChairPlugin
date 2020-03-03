@@ -2,10 +2,6 @@
 
 #include "ChairControl.h"
 
-
-
-
-
 UChairControl* UChairControl::SerialPort(bool& connected, int32 ComPort, AActor* TargetActor)
 {
 	UChairControl* value = NewObject<UChairControl>();
@@ -69,7 +65,6 @@ void UChairControl::StopSending()
 void UChairControl::Destroy(AActor * test)
 {
 	ClosePort();
-
 }
 
 void UChairControl::TimerSending(float time, float frequency, bool log)

@@ -2,7 +2,6 @@
 
 #pragma once
 
-//#include "Windows.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "UObject/NoExportTypes.h"
@@ -10,9 +9,7 @@
 #include "Runtime/Core/Public/Windows/MinWindows.h"
 #include "ChairControl.generated.h"
 
-/**
- * 
- */
+
 UCLASS(BlueprintType, Blueprintable, Category = ChairControl, meta = (DisplayName = "Chair Control"))
 class VRCHAIRPLUGIN_API UChairControl : public UObject
 {
@@ -21,8 +18,6 @@ class VRCHAIRPLUGIN_API UChairControl : public UObject
 protected:
 
 	virtual void BeginDestroy() override;
-
-
 
 public:
 
@@ -87,8 +82,6 @@ private:
 
 	void StartPost();
 	void StopPost();
-
-
 
 	bool OpenPort(int32 ComPort);
 
